@@ -1,0 +1,33 @@
+﻿<Window x:Class="LSIS.ImageCheck"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LSIS"
+        mc:Ignorable="d"
+        Title="ImageCheck" Height="1080" Width="1920" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" Loaded="Window_Loaded" WindowStyle="None">
+    <Grid Background="#FF737373">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="250"/>
+        </Grid.ColumnDefinitions>
+        <Button Content="View" FontSize="30" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,430" VerticalAlignment="Bottom" Width="230" Height="130" Click="View_Click"/>
+        <Button Content="Delete" FontSize="30" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,290" VerticalAlignment="Bottom" Width="230" Height="130" Click="Delete_Click"/>
+        <Button Content="Save" FontSize="30" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,150" VerticalAlignment="Bottom" Width="230" Height="130" Click="Save_Click"/>
+        <Button Content="Close" FontSize="30" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="230" Height="130" Click="Close_Click"/>
+        <TabControl x:Name="tabControl" Grid.Column="0" HorizontalAlignment="Left" Height="1080" VerticalAlignment="Top" Width="1670" SelectionChanged="tabControl_SelectionChanged">
+            <TabItem Header="Auto" FontSize="40">
+                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                    <Grid x:Name="ImageGrid_ICG" Background="#FFE5E5E5" Margin="0,0,0,0"/>
+                </ScrollViewer>
+
+            </TabItem>
+            <TabItem Header="Manual" FontSize="40">
+                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                    <Grid x:Name="ImageGrid_ICG_M" Background="#FFE5E5E5" Margin="0,0,0,0"/>
+                </ScrollViewer>
+
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

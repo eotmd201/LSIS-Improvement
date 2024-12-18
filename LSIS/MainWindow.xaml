@@ -1,0 +1,1197 @@
+﻿<Window x:Class="LSIS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:local="clr-namespace:LSIS" 
+        xmlns:viewmodel="clr-namespace:LSIS.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
+        xmlns:Page="clr-namespace:LSIS.Page"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="1080" Width="1920" ResizeMode="NoResize" WindowStartupLocation="Manual" WindowState="Maximized" Visibility="Visible" WindowStyle="None" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="7*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Menu>
+                <MenuItem Header="File" FontSize="20"/>
+                <MenuItem Header="System" FontSize="20">
+                    <MenuItem x:Name="CameraCon" Header="Camera(not connected)"/>
+                    <MenuItem x:Name="ServoCon" Header="Servo(not connected)"/>
+                    <MenuItem x:Name="PCBCon" Header="PCB(not connected)"/>
+                    <MenuItem Header="AlarmReset" Click="AlarmReset_Click"/>
+                    <MenuItem Header="ErrCode" Click="ErrCheck"/>
+                </MenuItem>
+                <MenuItem Header="Help" FontSize="20">
+                    <MenuItem Header="{Binding Version}" FontSize="20"/>
+                </MenuItem>
+                <MenuItem Header="About" FontSize="20">
+                    <MenuItem Header="회사명: (주)에스원바이오" />
+                    <MenuItem Header="주소: 49241 부산시 서구 구덕로 187(융합의학연구동), 1층 17호" />
+                    <MenuItem Header="전화 : 051-254-1379 팩스 : 051-254-1378" />
+                    <MenuItem Header="이메일 : medical@s-one.co.kr" />
+                </MenuItem>
+            </Menu>
+            <Grid Grid.Column="1" Background="#FF333333">
+                <TextBlock x:Name="WindowName" FontSize="20" Foreground="White" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Background="#FF333333" Grid.Column="1" Margin="0,0,20,0" />
+            </Grid>
+        </Grid>
+
+        <TabControl x:Name="tabControl" Grid.Row="1"  SelectedIndex="{Binding TabControlViewModel.SelectedIndex, Mode=TwoWay}" SelectionChanged="tabControl_SelectionChanged">
+            <TabItem Header="로그인" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding LoginViewModel.LoginCommand}" />
+                    </Grid.InputBindings>
+                    
+                    <Label Content="Login" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="80" Grid.Column="1" Grid.Row="0" Foreground="Black" FontWeight="Bold"/>
+                    <Label Content="ID" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="40" Grid.Column="0" Grid.Row="1" Foreground="Black" FontWeight="Bold" Margin="0,0,0,0"/>
+                    <Label Content="Password" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="40" Grid.Column="0" Grid.Row="2" Foreground="Black" FontWeight="Bold" Margin="0,0,0,0"/>
+                    <TextBox x:Name="UsernameTextBox" Text="{Binding LoginViewModel.Username, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Grid.Column="1" Grid.Row="1" Width="600"/>
+                    <PasswordBox x:Name="PasswordBox" Page:PasswordBoxHelper.BoundPassword ="{Binding LoginViewModel.Password, Mode=TwoWay}" Page:PasswordBoxHelper.BindPassword="True" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Grid.Column="1" Grid.Row="2" Width="600"/>
+                    <Button Content="Login" FontSize="40"  Grid.Column="1" Grid.Row="3" Width="600" Height="100" Command="{Binding LoginViewModel.LoginCommand}"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="계정 관리" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Add" Click="Account_Add_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Change" Click="Account_Change_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Delete" Click="Account_Delete_Click"/>
+                        <Button Height="80" Width="80" FontSize="18" FontWeight="Bold" Content="Manager" Click="Manager_Change"/>
+                        <Button Height="80" Width="80" FontSize="18" FontWeight="Bold" Content="PACSSet" Click="PACSSet_Click"/>
+                        <TextBox x:Name="Account_Search" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="300" Height="50" Margin="50,0,0,0" KeyDown="Account_Search_KeyDown"/>
+                        <Button Content="Find" FontSize="20" Width="75" Height="50" Click="Account_Find_Click"/>
+                        <Button Content="Reset" FontSize="20" Width="75" Height="50" Click="Account_Reset_Click"/>
+                    </ToolBar>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListView x:Name="List_Account" Grid.ColumnSpan="2" FontSize="30" Margin="0,0,0,0">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn x:Name="ID" Header="ID" DisplayMemberBinding="{Binding ID}" Width="200"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <!--<ListView ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount, Mode=TwoWay}" Grid.Column="1" FontSize="30" Margin="0,0,0,0">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}" Width="200"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>-->
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="환자 관리" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+
+                    </Grid.RowDefinitions>
+                    <ToolBar>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Add" Click="Add_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Change" Click="Change_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Delete" Click="Delete_Click"/>
+                        <TextBox x:Name="Patient_Search" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="300" Height="50" Margin="50,0,0,0" KeyDown="Search_KeyDown"/>
+                        <Button Content="Find" FontSize="20" Width="75" Height="50"  Click="Find_Click"/>
+                        <Button Content="Reset" FontSize="20" Width="75" Height="50" Click="Reset_Click"/>
+                    </ToolBar>
+
+                    <ListView x:Name="List_Patient"  Grid.Row="1" FontSize="20" Margin="0,0,0,0" SelectionChanged="List_Patient_SelectionChanged">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn x:Name="test" Header="Name" DisplayMemberBinding="{Binding Name}" Width="200"/>
+                                <GridViewColumn Header="HID" DisplayMemberBinding="{Binding HID}" Width="300"/>
+                                <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthday}" Width="200"/>
+                                <GridViewColumn Header="Sex" DisplayMemberBinding="{Binding Sex}" Width="100"/>
+                                <GridViewColumn Header="Comment" DisplayMemberBinding="{Binding Comment}" Width="825"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem Header="촬영" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Scan&#xA;Data" Background="#FF4E7DC2" Click="ScanData_Click"/>
+                        <Button x:Name="Preview" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Preview" Background="#FF4E7DC2" IsEnabled="False" Click="Servo_Preview_Click"/>
+                        <Button x:Name="Reset" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Reset" Background="#FF4E7DC2" IsEnabled="False" Click="Servo_Reset_Click"/>
+                        <Button x:Name="Reverse" Height="80" Width="80" FontSize="40" FontWeight="Bold" Content="↶" Background="#FF4E7DC2" VerticalAlignment="Bottom" IsEnabled="False" Click="Servo_Reverse_Click"/>
+                        <Button x:Name="Forward" Height="80" Width="80" FontSize="40" FontWeight="Bold" Content="↷" Background="#FF4E7DC2" IsEnabled="False" Click="Servo_Forward_Click"/>
+                        <Button x:Name="Up" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="▲" Background="#FF4E7DC2" IsEnabled="False" PreviewMouseDown="Up_Actuator" PreviewMouseUp="Stop_Up_Actuator" TouchDown="Up_Actuator" TouchUp="Stop_Up_Actuator"/>
+                        <Button x:Name="Down" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="▼" Background="#FF4E7DC2" IsEnabled="False" TouchDown="Down_Actuator" PreviewMouseDown="Down_Actuator" PreviewMouseUp="Stop_Up_Actuator" TouchUp="Stop_Up_Actuator"/>
+                        <Button x:Name="AutoScan" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Auto&#xA;Scan" Background="#FFED9140" IsEnabled="False" VerticalAlignment="Bottom" Click="AutoScan_Click"/>
+                        <Button x:Name="ManualScan" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Scan" Background="#FFED9140" IsEnabled="False" Click="Screenshot_Click"/>
+                        <Button x:Name="Button_Video"  Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Video" Background="#FFED9140" Click="Video_Click"/>
+                        <Button x:Name="Dicom_Video"  Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Dicom" Background="#FFED9140" Click="Dicom_Click"/>
+                        <!--<Button x:Name="Volume"  Height=`"80" Width="80" FontSize="20" FontWeight="Bold" Content="Volume" Background="#FFED9140" Click="Volume_Click"/>-->
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Confirm" Background="#FFED9140" Click="Confirm_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Grid" Margin="10,0,0,0" Click="Grid_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Color&#xA;Map" Margin="0,0,0,0" Click="ColorMap_Click"/>
+                        <Button x:Name="LED" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="DualLed" Click="Led_Click"/>
+                        <Button x:Name="LED2" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="ICGLed" Click="Led2_Click"/>
+                        <Button x:Name="Contour" Height="80" Width="80" FontSize="18" FontWeight="Bold" Content="Contour" Click="Contour_Click"/>
+                        <!--<Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Filter" Click="Filter_Click" />-->
+                        <Label x:Name="shotposition" Width="100" Content="Nomal" FontSize="20" Margin="50,10,10,10" Loaded="shotposition_Loaded"/>
+                        <Label x:Name="slidercount" Width="50" Content="50" FontSize="20" Margin="50,10,10,10"/>
+                        <Slider x:Name="slider" Margin="10,10,10,10"  Width="200" Maximum="255" Value="50" SmallChange="1" ValueChanged="slider_ValueChanged"/>
+
+                    </ToolBar>
+                    <Border Grid.Column="0" Grid.Row="1" Background="Black" BorderBrush="Gray" BorderThickness="5" >
+                        <Grid x:Name="MainGrid">
+                            <Image x:Name="MainImage" Grid.Row="0" Grid.Column="0" MouseDown="MainImage_MouseDown" />
+                            <Label x:Name="REC" Content="●" Foreground="Red" Margin="10,10,0,0" FontSize="25" Visibility="Hidden" />
+                            <Label x:Name="REC2" Content="REC" Foreground="white" Margin="40,10,0,0" FontSize="25" Visibility="Hidden"/>
+                            <Label x:Name="PositionLabel" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" FontSize="25"/>
+                            <Label x:Name="Gain" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" FontSize="25"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+            <TabItem Header="이미지 뷰어 리스트" Height ="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.ColumnSpan="2">
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content=" Image&#xA;Review" Background="#FFED9140" Click="Image_Review_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content=" Video&#xA;Review" Background="#FFED9140" Click="VideoView_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content=" Report&#xA; Review" Background="#FFED9140" Click="button_ReportView_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Report" Background="#FFED9140" Click="ReportSet_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Export" Background="#FFED9140" Click="Export_Click"/>
+                        <Button x:Name="SendPacsbtn" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Send&#xA;PACS" Background="#FFED9140" Click="SendToPacs_Click"  VerticalAlignment="Top"/>
+                    </ToolBar>
+                    <ListView x:Name="List_ImageReview" Grid.Row="1" FontSize="30" SelectionChanged="List_ImageReview_SelectionChanged" SelectionMode="Multiple">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="200"/>
+                                <GridViewColumn Header="Position" DisplayMemberBinding="{Binding Position}" Width="150"/>
+                                <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding Sequences}" Width="200"/>
+                                <GridViewColumn Header="Mode" DisplayMemberBinding="{Binding Mode}" Width="100"/>
+                                <GridViewColumn Header="CameraSet" DisplayMemberBinding="{Binding CameraSet}" Width="200"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Grid Grid.Column="1" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="500"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <ScrollViewer  VerticalScrollBarVisibility="Visible">
+                            <Grid x:Name="ImageGrid" Background="#FFE5E5E5" Margin="0,0,0,0"/>
+                        </ScrollViewer>
+                        <Border Grid.Row="1" BorderBrush="#FF333333" BorderThickness="5" >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Comment" FontWeight="Black"  Margin="10" FontSize="30" Width="auto" Height="auto" />
+                                <TextBox x:Name="Comment" Grid.Row="1"  AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" Background="#FFE5E5E5" BorderThickness="0" FontSize="30" Margin="10" Foreground="Black"/>
+                                <Button Grid.Row="2" Content="Save" FontSize="30" Width="150" HorizontalAlignment="Right" Margin="10" Click="CommentSave"/>
+                            </Grid>
+                        </Border>
+
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="이미지 뷰어" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar>
+                        <!--<Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content=" Review&#10;  Data" Background="#FF4E7DC2" Click="Review_Data_Click"/>-->
+                        <Button x:Name="SrcenDivision" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content=" Screen&#xA;Division" Background="#FF4E7DC2" Click="ScrenDivision_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Grid" Background="#FF4E7DC2" Click="ReviewGrid_Click"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content=" Color&#xA; Map" Background="#FF4E7DC2" Click="ReviewColorMap_Click" />
+                    </ToolBar>
+                    <Grid x:Name="ViewGrid" Grid.Row="1" AllowDrop="True" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Border1" Grid.Row="0" Grid.Column="0" Drop="img_View_Drop" Background="Black" BorderBrush="Gray" BorderThickness="5" MouseDown="Border_Click">
+                            <Grid>
+                                <Image x:Name="img_View1" AllowDrop="True"/>
+                                <Label x:Name="information1_View1"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" FontSize="20"/>
+                                <TextBlock x:Name="information2_View1"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Right"  Margin="10" FontSize="20"/>
+                                <Label x:Name="information3_View1"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" FontSize="20"/>
+                                <Label x:Name="information4_View1"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" FontSize="18"/>
+                            </Grid>
+                        </Border>
+                        <Border x:Name="Border2" Grid.Row="0" Grid.Column="1" Drop="img_View_Drop" Background="Black" BorderBrush="Gray" BorderThickness="5" MouseDown="Border_Click">
+                            <Grid>
+                                <Image x:Name="img_View2" AllowDrop="True"/>
+                                <Label x:Name="information1_View2"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" FontSize="20"/>
+                                <TextBlock x:Name="information2_View2"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Right" Margin="10" FontSize="20"/>
+                                <Label x:Name="information3_View2"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" FontSize="20"/>
+                                <Label x:Name="information4_View2"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" FontSize="18"/>
+                            </Grid>
+                        </Border>
+                        <Border Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Background="Black" BorderBrush="Gray" BorderThickness="5">
+                            <ScrollViewer x:Name="Image_Scroll"   VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+                                <Grid x:Name="Image_Select"/>
+                            </ScrollViewer>
+                        </Border>
+                        <Border x:Name="Border3" Grid.Row="1" Grid.Column="0" Drop="img_View_Drop" Background="Black" BorderBrush="Gray" BorderThickness="5" MouseDown="Border_Click">
+                            <Grid>
+                                <Image x:Name="img_View3"/>
+                                <Label x:Name="information1_View3"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" FontSize="20"/>
+                                <TextBlock x:Name="information2_View3"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Right" Margin="10" FontSize="20"/>
+                                <Label x:Name="information3_View3"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Margin="10" FontSize="20"/>
+                                <Label x:Name="information4_View3"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" FontSize="18"/>
+                            </Grid>
+                        </Border>
+                        <Border x:Name="Border4" Grid.Row="1" Grid.Column="1" Drop="img_View_Drop" Background="Black" BorderBrush="Gray" BorderThickness="5" MouseDown="Border_Click">
+                            <Grid>
+                                <Image x:Name="img_View4"/>
+                                <Label x:Name="information1_View4"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" FontSize="20"/>
+                                <TextBlock  x:Name="information2_View4"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Right" Margin="10" FontSize="20"/>
+                                <Label x:Name="information3_View4"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" FontSize="20"/>
+                                <Label x:Name="information4_View4"  Width="auto" Height="auto" Foreground="white" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" FontSize="18"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="비디오 뷰어 리스트" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.ColumnSpan="2">
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content=" Video&#xA;Review" Background="#FFED9140" Click="Video_Review_Click" />
+                        <!--<Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Export" Background="#FFED9140" Click="VideoExport_Click" />-->
+                        <Button x:Name="VideoSendPacsbtn" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Send&#xA;PACS" Background="#FFED9140" VerticalAlignment="Top" Click="VideoSendToPacs_Click"/>
+                    </ToolBar>
+                    <ListView x:Name="List_VideoReview" Grid.Row="1" FontSize="30" SelectionChanged="List_VideoReview_SelectionChanged">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="200"/>
+                                <GridViewColumn Header="Position" DisplayMemberBinding="{Binding Position}" Width="150"/>
+                                <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding Sequences}" Width="200"/>
+                                <GridViewColumn Header="Dicom" DisplayMemberBinding="{Binding Dicom}" Width="100"/>
+                                <GridViewColumn Header="FileName" DisplayMemberBinding="{Binding FileName}" Width="0"/>
+                                <GridViewColumn Header=" Path" DisplayMemberBinding="{Binding Path}" Width="0"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <!--<Image x:Name="VideoImage" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"/>-->
+                    <MediaElement Name="Thumbnail" Grid.Column="1" Grid.Row="1" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaEnded="VideoPlayer_MediaEnded"/>
+                    <!--<MediaElement Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"/>-->
+                </Grid>
+            </TabItem>
+            <TabItem Header="비디오 뷰어" Height="0">
+                <Grid Background="#7F000000">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.ColumnSpan="2">
+                        <Button x:Name="Marker" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Marker" Background="#FFED9140" Click="Marker_Click" />
+                        <Button x:Name="Eraser" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Eraser" Background="#FFED9140" Click="Eraser_Click" />
+                        <Button x:Name="AllEraser" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="AllEraser" Background="#FFED9140" Click="AllEraser_Click"/>
+                        <Button x:Name="Save" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Save" Background="#FFED9140" Click="VideoDataSave_Click"/>
+                    </ToolBar>
+                    <MediaElement Grid.Row="1" Grid.RowSpan="2" x:Name="Video_View" HorizontalAlignment="Stretch" LoadedBehavior="Manual" MediaOpened="Video_View_MediaOpened" MediaFailed="Video_View_MediaFailed" MediaEnded="Video_View_MediaEnded" MouseDown="Video_View_Click" ScrubbingEnabled="True"/>
+                    <Canvas Grid.Row="1" Grid.RowSpan="2" x:Name="Video_Canvas" HorizontalAlignment="Center" />
+                    <Image x:Name="MarkerImage" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"/>
+                    <ListView Grid.Column="1" Grid.Row="2" x:Name="List_PackagesSpeed" SelectionChanged="List_PackagesSpeed_SelectionChanged">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Num" DisplayMemberBinding="{Binding Num}" Width="40"/>
+                                <GridViewColumn Header="Video Time" DisplayMemberBinding="{Binding Time}" Width="100"/>
+                                <GridViewColumn Header="Section Time" DisplayMemberBinding="{Binding Section_Time}" Width="100"/>
+                                <GridViewColumn Header="Section Dist" DisplayMemberBinding="{Binding Section_Dist}" Width="100"/>
+                                <GridViewColumn Header="Section Speed" DisplayMemberBinding="{Binding Section_Speed}" Width="100"/>
+                                <GridViewColumn Header="Total Time" DisplayMemberBinding="{Binding total_Time}" Width="100"/>
+                                <GridViewColumn Header="Total Dist" DisplayMemberBinding="{Binding total_Dist}" Width="100"/>
+                                <GridViewColumn Header="Total Speed" DisplayMemberBinding="{Binding total_Speed}" Width="100"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Border x:Name="Video_Setting_Window" Grid.Row="3" Grid.ColumnSpan="2" Background="#7F000000" BorderBrush="Gray" BorderThickness="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="3*"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="X" Grid.Row="1" Margin="1450,80,0,0" FontSize="40"/>
+                            <Label x:Name="Quick"  Content="1" Grid.Row="1" Margin="1480,80,0,0" FontSize="40"/>
+                            <Slider x:Name="PlayTime" Margin="0,0,300,0" Thumb.DragStarted="PlayTime_DragStarted" Thumb.DragCompleted="PlayTime_DrageCompleted" ValueChanged="PlayTime_ValueChanged"/>
+                            <Label x:Name="PlayTime_Label" Content="00:00:00 / 00:00:00" FontSize="30" HorizontalAlignment="Right" Margin="0,0,0,0"/>
+                            <Button Grid.Row="1" HorizontalAlignment="Right" Content="File" FontSize="50" Width="250" Margin="0,10,10,10" Background="#7F595959" Click="File_Click"/>
+                            <Button x:Name="Video_Start" Grid.Row="1" HorizontalAlignment="Center" Content="▶" FontSize="50" Width="150" Margin="0,10,0,10" Background="#7F3F5CBF" Click="Video_Start_Click"/>
+                            <Button Grid.Row="1" HorizontalAlignment="Center" Content="▶▶" FontSize="40" Width="150" Margin="400,10,0,10" Background="#7F3F5CBF" Click="SpeedUp_Click"/>
+                            <Button Grid.Row="1" HorizontalAlignment="Center" Content="▶▶&#xA;  1" FontSize="40" Width="150" Margin="800,10,0,10" Background="#7F3F5CBF" Click="PositionUp_Click"/>
+                            <Button Grid.Row="1" HorizontalAlignment="Center" Content="◀◀" FontSize="40" Width="150" Margin="0,10,400,10" Background="#7F3F5CBF" Click="SpeedDown_Click"/>
+                            <Button Grid.Row="1" HorizontalAlignment="Center" Content="◀◀&#xA;  1" FontSize="40" Width="150" Margin="0,10,800,10" Background="#7F3F5CBF" Click="Positiondown_Click" />
+                        </Grid>
+                    </Border>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="리포트 이미지 편집" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.ColumnSpan="2">
+                        <Button x:Name="Report_Line_btn" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Line" Click="Report_Line_Click"/>
+                        <Button x:Name="Report_Extraction_btn" Height="80" Width="80" FontSize="15" FontWeight="Bold" Content="Extraction" Click="Report_Extraction_Click"/>
+                        <Button x:Name="Report_Eraser_btn" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Eraser" Click="Report_Eraser_Click"/>
+                        <!--<Button x:Name="Report_ICGCheck_btn" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="ICGCheck" Click="Report_ICGCheck_Click"/>-->
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Save" Click="Report_Save_Click" VerticalAlignment="Bottom"/>
+                        <Button Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Report" Click="Report_Click"/>
+                        <Slider x:Name="Report_ICG_Val" Margin="10,10,10,10"  Width="255" ValueChanged="Report_ICG_ValueChanged" Maximum="255" SmallChange="1"/>
+                    </ToolBar>
+                    <Border Grid.Column="0" Grid.Row="1" Background="Black" BorderBrush="Gray" BorderThickness="5">
+                        <Grid>
+                            <Image x:Name="ReportA" MouseDown="Report_MouseDown" Tag="0"/>
+                            <Label Content="A" FontSize="30" Margin="10"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Grid.Row="1" Background="Black" BorderBrush="Gray" BorderThickness="5">
+                        <Grid>
+                            <Image x:Name="ReportP" MouseDown="Report_MouseDown" Tag="2"/>
+                            <Label Content="P" FontSize="30" Margin="10"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="0" Grid.Row="2" Background="Black" BorderBrush="Gray" BorderThickness="5">
+                        <Grid>
+                            <Image x:Name="ReportM" MouseDown="Report_MouseDown" Tag="1"/>
+                            <Label Content="M" FontSize="30" Margin="10"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Grid.Row="2" Background="Black" BorderBrush="Gray" BorderThickness="5">
+                        <Grid>
+                            <Image x:Name="ReportL" MouseDown="Report_MouseDown" Tag="3"/>
+                            <Label Content="L" FontSize="30" Margin="10"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+            <TabItem Header="리포트 작성" Height="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.ColumnSpan="3">
+                        <Button Height="80" Width="80" FontSize="20"  FontWeight="Bold" Content="◀" Click="Left_page"/>
+                        <Button Height="80" Width="80" FontSize="20"  FontWeight="Bold" Content="▶" Click="Right_page"/>
+                        <Button Height="80" Width="80" FontSize="20"  FontWeight="Bold" Content="Save" Click="ReportSave_Click"/>
+                    </ToolBar>
+                    <Grid Grid.Column="1" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="ReportDay"  Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="Report_day0" Content="작성 중" Tag="0" BorderThickness="1" Grid.Column="0" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                            <Button x:Name="Report_day1" Tag="1" BorderThickness="1" Grid.Column="1" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                            <Button x:Name="Report_day2" Tag="2" BorderThickness="1" Grid.Column="2" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                            <Button x:Name="Report_day3" Tag="3" BorderThickness="1" Grid.Column="3" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                            <Button x:Name="Report_day4" Tag="4" BorderThickness="1" Grid.Column="4" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                            <Button x:Name="Report_day5" Tag="5" BorderThickness="1" Grid.Column="5" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                            <Button x:Name="Report_day6" Tag="6" BorderThickness="1" Grid.Column="6" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                            <Button x:Name="Report_day7" Tag="7" BorderThickness="1" Grid.Column="7" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="Report_day_Click"/>
+                        </Grid>
+                        <TabControl x:Name="Report_Page"  Grid.Row="1">
+                            <TabItem Header="page1" Height="0">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="70"/>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="9*"/>
+                                    </Grid.RowDefinitions>
+                                    <Label Content="환자정보" FontSize="30" Margin="5" Foreground="Black"/>
+                                    <Grid Margin="5" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                        </Grid.RowDefinitions>
+                                        <Border BorderThickness="1" BorderBrush="Black"/>
+                                        <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="이름" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="Report_Name" Content="홍길동" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="28" VerticalAlignment="Top"/>
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="생년월일" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="Report_Birthday" Content="YYYY.MM.DD" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="4" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="촬영날짜" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="5" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="Report_Shotdate" Content="YYYY.MM.DD" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="6" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="의료진" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="7" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="MedicalStaff" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="등록번호" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="Report_HID" Content="000000000" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="성별" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="Report_Sex" Content="M/F" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="4" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="환부" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="5" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="Report_Position" Content="Position" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="6" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="진단명" FontSize="20" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="7" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="diagnosis" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                    </Grid>
+                                    <Label Grid.Row="2" Content="Key Image" FontSize="30" Margin="10" Foreground="Black"/>
+                                    <Grid Margin="5" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="70"/>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="70"/>
+                                        </Grid.RowDefinitions>
+                                        <Image x:Name="ReportA_View"/>
+                                        <Label Content="A" FontSize="20" Margin="10,0,0,0"/>
+                                        <Image Grid.Column="1" x:Name="ReportP_View"/>
+                                        <Label Grid.Column="1" Content="P" FontSize="20" Margin="10,0,0,0"/>
+                                        <Image Grid.Column="0" Grid.Row="2" x:Name="ReportM_View"/>
+                                        <Label Grid.Column="0" Grid.Row="2" Content="M" FontSize="20" Margin="10,0,0,0"/>
+                                        <Image Grid.Column="1" Grid.Row="2" x:Name="ReportL_View"/>
+                                        <Label Grid.Column="1" Grid.Row="2" Content="L" FontSize="20" Margin="10,0,0,0"/>
+                                        <Grid Grid.Column="0" Grid.Row="1" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="1*"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="HandOrFoot" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="A_Hand_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="A_Hand_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="28" VerticalAlignment="Top"/>
+                                            </Border>
+                                            <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Lower" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="A_Lower_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="A_Lower_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Upper" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="5" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="A_Upper_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="5" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="A_Upper_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="1" Grid.Row="1" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="1*"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Lower" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="P_Lower_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="P_Lower_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Upper" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="P_Upper_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="P_Upper_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="0" Grid.Row="3" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="1*"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Lower" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="M_Lower_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="M_Lower_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Upper" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="M_Upper_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="M_Upper_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="1" Grid.Row="3" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="1*"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Lower" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="L_Lower_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="L_Lower_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="Upper" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                                <ComboBox x:Name="L_Upper_Pattern">
+                                                    <ComboBoxItem Content="0. Linear"/>
+                                                    <ComboBoxItem Content="1. Splash"/>
+                                                    <ComboBoxItem Content="2. Stardust"/>
+                                                    <ComboBoxItem Content="3. Diffuse"/>
+                                                    <ComboBoxItem Content="4. Non-Flow"/>
+                                                </ComboBox>
+                                            </Border>
+                                            <Border Grid.Column="3" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                                <Label x:Name="L_Upper_ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="page2" Height="0">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="306"/>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="40"/>
+                                        <RowDefinition Height="310"/>
+                                    </Grid.RowDefinitions>
+                                    <Label  Content="Key Image" FontSize="30" Margin="5" Foreground="Black"/>
+                                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                        </Grid.RowDefinitions>
+                                        <Image Grid.Column="0" Grid.Row="0" x:Name="Page2_ReportA_View" Margin="5" Stretch="Fill"/>
+                                        <Image Grid.Column="1" Grid.Row="0" x:Name="Page2_ReportP_View" Margin="5" Stretch="Fill"/>
+                                        <Image Grid.Column="0" Grid.Row="1" x:Name="Page2_ReportM_View" Margin="5" Stretch="Fill"/>
+                                        <Image Grid.Column="1" Grid.Row="1" x:Name="Page2_ReportL_View" Margin="5" Stretch="Fill"/>
+                                    </Grid>
+                                    <Label Grid.Row="2" Content="Data table" FontSize="30" Margin="5" Foreground="Black"/>
+                                    <Grid Grid.Row="3" Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="ST" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="28" VerticalAlignment="Bottom" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="strattime" Content="00:00" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="0"  BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="DT" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="datatime"  Content="00:00" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="4" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="ET" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="5" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="timetaken" Content="0 min" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                    </Grid>
+                                    <Grid Grid.Row="4" Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                        </Grid.RowDefinitions>
+                                        <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="Area" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="Pattern" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="Velocity" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="0" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="ROI" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="A" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=A_Hand_Pattern, Mode=TwoWay}"/>
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityA" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=A_Hand_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="2" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="LA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="2" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternLA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=A_Lower_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="2" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityLA" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Height="28" VerticalAlignment="Bottom" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="2" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiLA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=A_Lower_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="3" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="UA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="3" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternUA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=A_Upper_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="3" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityUA" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="3" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiUA" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=A_Upper_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="4" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="LP" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="4" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternLP" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=P_Lower_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="4" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityLP" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="4" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiLP" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=P_Lower_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="5" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="UP" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="5" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternUP" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=P_Upper_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="5" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityUP" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="5" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiUP" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=P_Upper_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="6" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="LM" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="6" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternLM" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=M_Lower_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="6" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityLM" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="6" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiLM" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=M_Lower_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="7" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="UM" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="7" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternUM" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=M_Upper_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="7" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityUM" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="7" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiUM" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=M_Upper_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="8" BorderThickness="1" BorderBrush="Black">
+                                            <Label  Content="LL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="28" VerticalAlignment="Top" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="8" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternLL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=L_Lower_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="8" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityLL" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="8" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiLL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=M_Lower_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="0" Grid.Row="9" BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="UL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="1" Grid.Row="9" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="PatternUL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Text, ElementName=L_Upper_Pattern, Mode=TwoWay}" />
+                                        </Border>
+                                        <Border Grid.Column="2" Grid.Row="9" BorderThickness="1" BorderBrush="Black">
+                                            <TextBox x:Name="VelocityUL" FontSize="20" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Background="White" Foreground="Black" BorderBrush="White"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Grid.Row="9" BorderThickness="1" BorderBrush="Black">
+                                            <Label x:Name="RoiUL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding Content, ElementName=L_Upper_ROI, Mode=TwoWay}" />
+                                        </Border>
+                                    </Grid>
+                                    <Label Grid.Column="1" Grid.Row="2" Content="Dermal Backflow Pattern Chart" FontSize="30" Margin="5" Foreground="Black"/>
+                                    <Button Grid.Column="1" Grid.Row="2" Margin="470,10,60,10" Content="❌" Click="ChartDelClick"/>
+                                    <Button Grid.Column="1" Grid.Row="2" Margin="520,10,10,10" Content="▼" Click="ChartAddClick"/>
+                                    <Grid x:Name="ChartGrid" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="121*"/>
+                                            <ColumnDefinition Width="23*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <lvc:CartesianChart x:Name="chart" LegendLocation="Bottom" Background="WhiteSmoke" Grid.ColumnSpan="2"/>
+                                        <ListView x:Name="ChartList" Visibility="Hidden" FontSize="30" MouseDoubleClick="SelectChart" Grid.ColumnSpan="2">
+                                            <ListView.View>
+                                                <GridView>
+                                                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="200"/>
+                                                    <GridViewColumn Header="Position" DisplayMemberBinding="{Binding Position}" Width="150"/>
+                                                    <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding Sequences}" Width="200"/>
+                                                </GridView>
+                                            </ListView.View>
+                                        </ListView>
+                                    </Grid>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="page3" Height="0">
+                                <Grid Background="White">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="200"/>
+                                    </Grid.RowDefinitions>
+                                    <Label  Content="COMMENT" FontSize="30" Margin="5" Foreground="Black"/>
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="153"/>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="153"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Image x:Name="CommentA_View" Grid.Column="0" Grid.Row="0" Margin="5" Stretch="Fill"/>
+                                        <Image x:Name="CommentP_View" Grid.Column="1" Grid.Row="0" Margin="5" Stretch="Fill"/>
+                                        <Image x:Name="CommentM_View" Grid.Column="0" Grid.Row="2" Margin="5" Stretch="Fill"/>
+                                        <Image x:Name="CommentL_View" Grid.Column="1" Grid.Row="2" Margin="5" Stretch="Fill"/>
+                                        <Grid Grid.Row="1" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="ANTERIOR" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <TextBox x:Name="Anterior" Grid.Column="1" FontSize="20" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" Background="White" Foreground="Black"/>
+                                        </Grid>
+                                        <Grid Grid.Column="1" Grid.Row="1" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="POSTERIOR" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                                            </Border>
+                                            <TextBox x:Name="Posterior" Grid.Column="1" FontSize="20" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" Background="White" Foreground="Black"/>
+                                        </Grid>
+                                        <Grid Grid.Column="0" Grid.Row="3" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="MEDIAL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <TextBox x:Name="Medial" Grid.Column="1" FontSize="20" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" Background="White" Foreground="Black"/>
+                                        </Grid>
+                                        <Grid Grid.Column="1" Grid.Row="3" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Black">
+                                                <Label Content="LATERAL" FontSize="20" Foreground="Black"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                            </Border>
+                                            <TextBox x:Name="Lateral" Grid.Column="1" FontSize="20" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" Background="White" Foreground="Black"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid Grid.Row="1" Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="60"/>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="60"/>
+                                        </Grid.RowDefinitions>
+
+                                    </Grid>
+                                    <Label Grid.Row="2"  Content="SUMMARY" FontSize="30" Margin="5" Foreground="Black"/>
+                                    <TextBox x:Name="Summary" Grid.Row="3" Grid.ColumnSpan="2" Margin="5" FontSize="20" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" Background="White" Foreground="Black"/>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+                        <Image x:Name="ReportLoadImage" Grid.Row="1" Visibility="Hidden" Stretch="Fill"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="리포트 뷰어" Height="0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.ColumnSpan="3">
+                        <Button Height="80" Width="80" FontSize="20"  FontWeight="Bold" Content="◀" Click="Report_Left_page"/>
+                        <Button Height="80" Width="80" FontSize="20"  FontWeight="Bold" Content="▶" Click="Report_Right_page"/>
+                        <Button Height="80" Width="80" FontSize="20"  FontWeight="Bold" Content="Print" Click="Print_Click"/>
+                        <Button x:Name="ReportSendPacsbtn" Height="80" Width="80" FontSize="20" FontWeight="Bold" Content="Send&#xA;PACS" Click="SendToPasc"  VerticalAlignment="Top"/>
+                    </ToolBar>
+                    <ListView x:Name="List_ReportView" Grid.Row="1" FontSize="30" SelectionChanged="List_ReportView_SelectionChanged" >
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="200"/>
+                                <GridViewColumn Header="Position" DisplayMemberBinding="{Binding Position}" Width="150"/>
+                                <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding Sequences}" Width="200"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Image x:Name="ReportImage" Grid.Column="1" Grid.Row="1"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="마스터 모드" Height="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <GroupBox Header="Serialnum" FontSize="40" Background="#FF434343">
+                            <Grid>
+                                <Label Content="Serialnum :" Margin="10,10,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <TextBox x:Name="Serialnum" Margin="200,10,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button Content="적용" Margin="450,10,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SerialSave"/>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Grid.Row="1" Header="Manager" FontSize="40" Background="#FF434343">
+                            <Grid>
+                                <Button Content="관리자ID초기화" Margin="10,130,0,0" FontSize="30" Width="250" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Click="ManagerInit"/>
+                                <Label x:Name="MI" Content="Manager ID : " Margin="10,10,0,0" FontSize="30" Width="500" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label x:Name="MP" Content="Manager Password : " Margin="10,70,0,0" FontSize="30" Width="500" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Grid.Row="2" Header="Pacs Data" FontSize="40" Background="#FF434343">
+                            <Grid>
+                                <Button x:Name="PacsDataSavebtn" Content="적용" Margin="10,190,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False" Click="PacsDataSave"/>
+                                <Button Content="테스트 데이터 전송" Margin="230,190,0,0" FontSize="30" Width="300" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Click="PacsSendTest"/>
+                                <Label Content="AET :" Grid.Row="2" Margin="10,10,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <TextBox  x:Name="AET" Grid.Row="2" Margin="110,10,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label Content="IP :" Grid.Row="2" Margin="10,70,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <TextBox x:Name="IP" Grid.Row="2" Margin="110,70,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label Content="Port :" Grid.Row="2" Margin="10,130,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <TextBox x:Name="Port" Grid.Row="2" Margin="110,130,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                    <Grid Grid.Column="2">
+                        <GroupBox  Header="PCB Control" FontSize="40" Background="#FF434343">
+                            <Grid>
+                                <Label x:Name="mode" Content="mode : " Margin="10,10,0,0" FontSize="30" Width="250" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label x:Name="Sensor1" Content="Sensor1 : " Margin="10,60,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label x:Name="Sensor2" Content="Sensor2 : " Margin="210,60,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label x:Name="Sensor3" Content="Sensor3 : " Margin="410,60,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label x:Name="Sensor4" Content="Sensor4 : " Margin="610,60,0,0" FontSize="30" Width="200" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Button Height="80" Width="80" Margin="810,15,0,0" FontSize="20" Content="센서리셋" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SensorInit"/>
+                                <Button Height="80" Width="80" Margin="10,120,0,0" FontSize="40" FontWeight="Bold" Content="↶" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Servo_Reverse_Click"/>
+                                <Button Height="80" Width="80" Margin="100,120,0,0" FontSize="40" FontWeight="Bold" Content="↷" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Servo_Forward_Click"/>
+                                <Button Height="80" Width="80" Margin="190,120,0,0" FontSize="20" FontWeight="Bold" Content="Reset" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Servo_Reset_Click"/>
+                                <Button Height="80" Width="80" Margin="280,120,0,0" FontSize="20" FontWeight="Bold" Content="▲" HorizontalAlignment="Left" VerticalAlignment="Top" PreviewMouseDown="Up_Actuator" PreviewMouseUp="Stop_Up_Actuator" TouchDown="Up_Actuator" TouchUp="Stop_Up_Actuator"/>
+                                <Button Height="80" Width="80" Margin="370,120,0,0" FontSize="20" FontWeight="Bold" Content="▼" HorizontalAlignment="Left" VerticalAlignment="Top" TouchDown="Down_Actuator" PreviewMouseDown="Down_Actuator" PreviewMouseUp="Stop_Up_Actuator" TouchUp="Stop_Up_Actuator"/>
+                                <Button Height="80" Width="80" Margin="460,120,0,0" FontSize="20" FontWeight="Bold" Content="DualLed" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Led_Click"/>
+                                <Button Height="80" Width="80" Margin="550,120,0,0" FontSize="20" FontWeight="Bold" Content="ICGLed" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Led2_Click"/>
+                                <Button Height="80" Width="80" Margin="640,120,0,0" FontSize="20" FontWeight="Bold" Content="ErrCheck" HorizontalAlignment="Left" VerticalAlignment="Top" Click="ErrCheck"/>
+                                <Button Height="80" Width="80" Margin="730,120,0,0" FontSize="20" FontWeight="Bold" Content="ServoOn" HorizontalAlignment="Left" VerticalAlignment="Top" Click="ServoOn"/>
+                                <Button Height="80" Width="80" Margin="820,120,0,0" FontSize="20" FontWeight="Bold" Content="ServoOff" HorizontalAlignment="Left" VerticalAlignment="Top" Click="ServoOff"/>
+                            </Grid>
+
+                        </GroupBox>
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Grid x:Name="Grid_Color" Grid.Row="2" Background="#FFE5E5E5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Button x:Name="button_Patient" Grid.RowSpan="2" FontSize="30" Content="   Patient&#10;Information" FontWeight="Bold" HorizontalContentAlignment="Center" Margin="0,0,10,0" Background="#1F4E79" IsEnabled="False" Click="Patient_Click"/>
+            <Grid Grid.Column="1" Grid.Row="0" Background="#7F7F7F" Margin="0,0,10,0" Grid.RowSpan="2">
+                <TextBlock x:Name="textblock_MainName" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Margin="0,-40,10,0" Background="#7F7F7F"/>
+                <TextBlock x:Name="textblock_MainHID" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Margin="0,40,10,0" Background="#7F7F7F"/>
+            </Grid>
+            <Button x:Name="Position1" Grid.Column="2" Grid.RowSpan="2" FontSize="30" FontWeight="Bold" HorizontalContentAlignment="Center" Margin="0,0,10,0" Background="#7F7F7F" IsEnabled="False" Click="Position_Click"/>
+            <Button x:Name="Position2" Grid.Column="3" Grid.RowSpan="2" FontSize="30" FontWeight="Bold" HorizontalContentAlignment="Center" Margin="0,0,10,0" Background="#7F7F7F" IsEnabled="False" Click="Position_Click"/>
+            <Button x:Name="button_Scan" Grid.Column="4" Grid.RowSpan="2" FontSize="30" Content="Scan" FontWeight="Bold" HorizontalContentAlignment="Center" Margin="0,0,10,0" Background="#002060"  IsEnabled="False" Click="Scan_Click"/>
+            <Button x:Name="button_Review" Grid.Column="5" Grid.RowSpan="2" FontSize="30" Content="Review" FontWeight="Bold" HorizontalContentAlignment="Center" Margin="0,0,10,0" Background="#002060" IsEnabled="False" Click="Review_Click"/>
+            <Button x:Name="button_Setting" Grid.Column="6" Grid.Row="0" FontSize="30" Content="Setting" FontWeight="Bold" HorizontalContentAlignment="Center" Margin="0,0,0,5" Background="#1F4E79" IsEnabled="False" Click="button_Setting_Click"/>
+            <Button Grid.Column="6" Grid.Row="1" FontSize="30" Content="Exit" FontWeight="Bold" HorizontalContentAlignment="Center" Margin="0,5,0,0" Background="#1F4E79" Click="Shutdown_Click"/>
+        </Grid>
+    </Grid>
+</Window>

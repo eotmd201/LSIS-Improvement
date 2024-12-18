@@ -1,0 +1,30 @@
+﻿<Window x:Class="LSIS.VideoRenderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LSIS"
+        mc:Ignorable="d"
+        Title="VideoRenderWindow" Height="1000" Width="768" WindowStyle="None" ResizeMode="NoResize" Loaded="Window_Loaded">
+    <Grid x:Name="DataRender">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="310"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="RenderImage"/>
+        <ListView x:Name="RenderList" Grid.Row="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Num" DisplayMemberBinding="{Binding Num}" Width="40"/>
+                    <GridViewColumn Header="Video Time" DisplayMemberBinding="{Binding Time}" Width="100"/>
+                    <GridViewColumn Header="Section Time" DisplayMemberBinding="{Binding Section_Time}" Width="100"/>
+                    <GridViewColumn Header="Section Dist" DisplayMemberBinding="{Binding Section_Dist}" Width="100"/>
+                    <GridViewColumn Header="Section Speed" DisplayMemberBinding="{Binding Section_Speed}" Width="100"/>
+                    <GridViewColumn Header="Total Time" DisplayMemberBinding="{Binding total_Time}" Width="100"/>
+                    <GridViewColumn Header="Total Dist" DisplayMemberBinding="{Binding total_Dist}" Width="100"/>
+                    <GridViewColumn Header="Total Speed" DisplayMemberBinding="{Binding total_Speed}" Width="100"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>

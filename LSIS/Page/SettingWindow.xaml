@@ -1,0 +1,126 @@
+﻿<Window x:Class="LSIS.SettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LSIS"
+        mc:Ignorable="d"
+        Title="SettingWindow" Height="620" Width="500"  ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid Background="#FF737373">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="197"/>
+            <RowDefinition Height="147"/>
+            <RowDefinition Height="177"/>
+            <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
+        <GroupBox Header="Scan Image Setting" Background="#FF707070">
+            <Grid >
+                <!--<Label Content="Circumference Interval" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>-->
+                <Label Content="Grid" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+                <Label Content="View Range" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0"/>
+                <!--<ComboBox x:Name="Circumference_Interval" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,12,10,0">
+                    <ComboBoxItem Content="10mm"/>
+                    <ComboBoxItem Content="20mm"/>
+                    <ComboBoxItem Content="30mm"/>
+                </ComboBox>-->
+                <ComboBox x:Name="Grid" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,12,10,0">
+                    <ComboBoxItem Content="50mm"/>
+                    <ComboBoxItem Content="100mm"/>
+                </ComboBox>
+                <ComboBox x:Name="View_Range" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,42,10,0">
+                    <ComboBoxItem Content="900 x 350"/>
+                    <ComboBoxItem Content="900 x 300"/>
+                    <ComboBoxItem Content="450 x 450"/>
+                    <ComboBoxItem Content="Full"/>
+                    <!--<ComboBoxItem Content="700 x 300"/>
+                    <ComboBoxItem Content="600 x 400"/>
+                    <ComboBoxItem Content="600 x 300"/>
+                    <ComboBoxItem Content="500 x 400"/>
+                    <ComboBoxItem Content="400 x 400"/>-->
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Operation Setting" Grid.Row="1" Background="#FF707070">
+            <Grid>
+                <!--<Label Content="Extended Shot" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>-->
+                <Label Content="Auto Rotation Angle" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,10,0,0"/>
+                <Label Content="Manual Rotation Angle" FontSize="20" HorizontalAlignment="Left" Margin="10,40,0,0"/>
+                <!--<ComboBox x:Name="Extended_Shot" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,12,10,0">
+                    <ComboBoxItem Content="Nomal scan"/>
+                    <ComboBoxItem Content="Middle scan"/>
+                    <ComboBoxItem Content="Full scan"/>
+                </ComboBox>-->
+                <ComboBox x:Name="Auto_Rotation_Angle" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,12,10,0">
+                    <ComboBoxItem Content="45˚"/>
+                    <ComboBoxItem Content="90˚"/>
+                </ComboBox>
+                <ComboBox x:Name="Manual_Rotation_Angle" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,42,10,0">
+                    <ComboBoxItem Content="22.5˚"/>
+                    <ComboBoxItem Content="45˚"/>
+                    <ComboBoxItem Content="90˚"/>
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Camera Setting" Grid.Row="2" Background="#FF707070">
+            <Grid>
+                <Label Content="Exposure Time" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+                <Label Content="Gain" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0"/>
+                <Label Content="Gamma" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,70,0,0"/>
+                <Label Content="Filter" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100,0,0"/>
+
+                <ComboBox x:Name="Exposure_Time" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,12,10,0">
+                    <ComboBoxItem Content="0.1s"/>
+                    <ComboBoxItem Content="0.2s"/>
+                    <ComboBoxItem Content="0.3s"/>
+                    <ComboBoxItem Content="0.4s"/>
+                    <ComboBoxItem Content="0.5s"/>
+                    <ComboBoxItem Content="0.6s"/>
+                    <ComboBoxItem Content="0.7s"/>
+                    <ComboBoxItem Content="0.8s"/>
+                    <ComboBoxItem Content="0.9s"/>
+                    <ComboBoxItem Content="1s"/>
+                </ComboBox>
+
+                <ComboBox x:Name="Gain" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,42,10,0">
+                    <ComboBoxItem Content="0dB"/>
+                    <ComboBoxItem Content="3dB"/>
+                    <ComboBoxItem Content="6dB"/>
+                    <ComboBoxItem Content="9dB"/>
+                    <ComboBoxItem Content="12dB"/>
+                    <ComboBoxItem Content="15dB"/>
+                    <ComboBoxItem Content="18dB"/>
+                    <ComboBoxItem Content="21dB"/>
+                    <ComboBoxItem Content="24dB"/>
+                    <ComboBoxItem Content="27dB"/>
+                    <ComboBoxItem Content="30dB"/>
+                    <ComboBoxItem Content="33dB"/>
+                    <ComboBoxItem Content="36dB"/>
+                    <ComboBoxItem Content="39dB"/>
+                    <ComboBoxItem Content="42dB"/>
+                    <ComboBoxItem Content="45dB"/>
+                </ComboBox>
+
+                <ComboBox x:Name="Gamma" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,72,10,0">
+                    <ComboBoxItem Content="0.3"/>
+                    <ComboBoxItem Content="0.4"/>
+                    <ComboBoxItem Content="0.5"/>
+                    <ComboBoxItem Content="0.6"/>
+                    <ComboBoxItem Content="0.7"/>
+                    <ComboBoxItem Content="0.8"/>
+                    <ComboBoxItem Content="0.9"/>
+                    <ComboBoxItem Content="1"/>
+                </ComboBox>
+                <ComboBox x:Name="Filter" HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Margin="0,102,10,0">
+                    <ComboBoxItem Content="On"/>
+                    <ComboBoxItem Content="Off"/>
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,10" Grid.Row="3" VerticalAlignment="Center" Width="100" Height="50" Click="Cancel_Click"/>
+        <Button Content="Save" HorizontalAlignment="Right" Margin="0,10,110,10" Grid.Row="3" VerticalAlignment="Center" Width="100" Height="50" Click="Save_Click"/>
+        <Button Content="Intialization" HorizontalAlignment="Right" Margin="0,10,219,10" Grid.Row="3" VerticalAlignment="Center" Width="100" Height="50" Click="Initialization_Click"/>
+    </Grid>
+</Window>
