@@ -14,19 +14,31 @@ namespace LSIS.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
+        public event Action<string> ShowMessageEvent; // 메시지 표시 이벤트
         public TabControlViewModel TabControlViewModel { get; }
         public LoginViewModel LoginViewModel { get; }
-        private readonly CapacityService _capacityService;
+        public CapacityViewModel CapacityViewModel { get; }
+        public VersionViewModel VersionViewModel { get; }
         private readonly DB _db;
+
         
         public MainViewModel(Login login, DB db, Equipment divice, SoftwareValidityService validityService)
         {
+            VersionViewModel = new VersionViewModel();
             TabControlViewModel = new TabControlViewModel();
+            CapacityViewModel = new CapacityViewModel();
             LoginViewModel = new LoginViewModel(login, db, divice, validityService, TabControlViewModel);
+            CapacityViewModel.MessageRequested += TriggerShowMessage;
+            LoginViewModel.MessageRequested += TriggerShowMessage;
             _db = db;
             TabControlViewModel.MoveToTab("로그인");
         }
 
+        // 이벤트를 호출하는 헬퍼 메서드
+        protected void TriggerShowMessage(string message)
+        {
+            ShowMessageEvent?.Invoke(message);
+        }
         ///*** 마스터 모드 ***///
 
         /*

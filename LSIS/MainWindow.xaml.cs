@@ -96,7 +96,6 @@ namespace LSIS
             DataContext = _viewModel;
             servo.OnTimeChanged += ServoMove_OnTimeChanged;
 
-            // 이벤트 구독
             _viewModel.ShowMessageEvent += ShowMessage;
             _viewModel.OpenManagerWindowEvent += OpenManagerWindow;
         }
@@ -111,6 +110,14 @@ namespace LSIS
             var managerWindow = new Manager(db);
             managerWindow.ShowDialog();
 
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            if (DataContext is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+            base.OnClosed(e);
         }
     }
 
@@ -3759,14 +3766,17 @@ namespace LSIS
             HwndSource source = HwndSource.FromHwnd(helper.Handle);
             source.AddHook(new HwndSourceHook(this.WndProc));
 
-            double drive = cap.Check();
+            _viewModel.CapacityViewModel.InitializeDriveStatus();
+            
+
+            /*double drive = cap.CheckCapacity();
             if (drive < 10)
             {
                 MessageBox.Show($"드라이브 사용 가능 공간이 {drive} GB 남았습니다.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            }*/
             logdata.CleanupOldLogs(7); //일주일 지난 로그 지우기
             
-            logdata.WriteLog($"==============프로그램 로드 남은용량 : {drive}GB ==============");
+            //logdata.WriteLog($"==============프로그램 로드 남은용량 : {drive}GB ==============");
             //db.Start();
             dm.Load(db);
             divice.Load(db);
@@ -3803,6 +3813,10 @@ namespace LSIS
             if(tabControl.SelectedIndex == 0)
             {
                 UsernameTextBox.Focus();
+            }
+            else if(tabControl.SelectedIndex == 11)
+            {
+                Console.WriteLine("마스터 탭");
             }
             /*if (e.OriginalSource is TabControl)
             {

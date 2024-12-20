@@ -30,7 +30,7 @@
                     <MenuItem Header="ErrCode" Click="ErrCheck"/>
                 </MenuItem>
                 <MenuItem Header="Help" FontSize="20">
-                    <MenuItem Header="{Binding Version}" FontSize="20"/>
+                    <MenuItem Header="{Binding VersionViewModel.Version}" FontSize="20"/>
                 </MenuItem>
                 <MenuItem Header="About" FontSize="20">
                     <MenuItem Header="회사명: (주)에스원바이오" />

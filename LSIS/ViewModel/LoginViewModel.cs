@@ -10,6 +10,7 @@ namespace LSIS.ViewModel
 {
     public class LoginViewModel : BaseViewModel
     {
+        public event Action<string> MessageRequested;
         private readonly Login _login;
         private readonly TabControlViewModel _tabControlViewModel;
         private readonly Equipment _divice;
@@ -35,14 +36,14 @@ namespace LSIS.ViewModel
             }
             if (!_divice.SerialCheck())
             {
-                TriggerShowMessage("Serial번호를 등록 후 사용하세요.");
+                MessageRequested?.Invoke("Serial번호를 등록 후 사용하세요.");
                 return;
             }
             else
             {
                 if (_validityService.IsSoftwareExpired(out DateTime validityPeriod))
                 {
-                    TriggerShowMessage($"소프트웨어의 유효기간이 지났습니다. ({validityPeriod:yyyy-MM-dd})");
+                    MessageRequested?.Invoke($"소프트웨어의 유효기간이 지났습니다. ({validityPeriod:yyyy-MM-dd})");
                     return;
                 }
                 string accountMode = _login.AccountCheck(_db, Username, Password);
@@ -60,7 +61,7 @@ namespace LSIS.ViewModel
                 }
                 else
                 {
-                    TriggerShowMessage("ID와 Password를 확인해주세요.");
+                    MessageRequested?.Invoke("ID와 Password를 확인해주세요.");
                 }
             }
 

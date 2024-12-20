@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LSIS
+namespace LSIS.ViewModel
 {
-    class Ver
+    public class VersionViewModel : BaseViewModel
     {
         public string _version;
         public string _buildDate;
 
-        public Ver()
+        public VersionViewModel()
         {
             // Assembly 정보에서 버전 정보를 가져옵니다.
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
@@ -42,13 +42,6 @@ namespace LSIS
                 _buildDate = value;
                 OnPropertyChanged(nameof(BuildDate));
             }
-        }
-
-        // INotifyPropertyChanged 구현
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace LSIS.Service
     class CapacityService
     {
         double capacity;
-        public double Check()
+        public double CheckCapacity()
         {
             DriveInfo cDrive = new DriveInfo("C");
             if (cDrive.IsReady)
@@ -23,5 +23,15 @@ namespace LSIS.Service
             capacity = Math.Round(capacity, 2);
             return capacity;
         }
+        // 10GB 미만인지 여부 확인 메서드
+        public bool IsBelowThreshold(double threshold = 10)
+        {
+            // 현재 용량 확인
+            CheckCapacity();
+
+            // threshold 값과 비교
+            return capacity < threshold;
+        }
+
     }
 }

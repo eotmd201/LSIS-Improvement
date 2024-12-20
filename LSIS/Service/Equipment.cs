@@ -21,7 +21,10 @@ namespace LSIS.ViewModel
             }
             rdr.Close();
         }
+        public void Load()
+        {
 
+        }
         public string GetSerialnum()
         {
             return serialnum;

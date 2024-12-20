@@ -271,12 +271,14 @@
     </Compile>
     <Compile Include="Service\TimeLock.cs" />
     <Compile Include="Service\USBSystem.cs" />
-    <Compile Include="Service\Ver.cs" />
+    <Compile Include="ViewModel\MasterViewModelcs.cs" />
+    <Compile Include="ViewModel\VersionViewModel.cs" />
     <Compile Include="Service\VideoPlayer.cs" />
     <Compile Include="Page\VideoRenderWindow.xaml.cs">
       <DependentUpon>VideoRenderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\CapacityViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
